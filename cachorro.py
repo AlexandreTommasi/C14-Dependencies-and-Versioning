@@ -8,8 +8,4 @@ data = response.json()
 
 if data:
     img_url = data[0]['url']
-    img_response = requests.get(img_url)
-    img = Image.open(BytesIO(img_response.content))
-    img.show()
-else:
-    print("Nenhuma imagem encontrada.")
+    print(img_url)
