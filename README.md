@@ -6,19 +6,38 @@
 This project contains the file `cachorro.py`, which displays a random dog image when executed. The image is fetched from [The Dog API](https://thedogapi.com/).
 
 ### How it works
-- When you run `cachorro.py`, it sends a request to The Dog API to get a random dog image.
-- The image is then displayed automatically on your screen.
+
+The recommended way to use this project is through the web interface:
+
+- The Flask web application provides a simple interface in your browser.
+- When you access the `/dog` route (by clicking a button or similar in the interface), the backend executes `cachorro.py` to fetch a new dog image URL.
+- The image URL is returned to the frontend, which can then display the image in the browser.
+
+This structure allows you to get random dog images directly from your browser in a user-friendly way.
 
 ### Requirements
 - Python 3
 - The following packages (listed in `requirements.txt`):
   - requests
   - Pillow
+  - Flask 
 
 ### Usage
-```bash
-python cachorro.py
-```
+
+#### Running via Web Interface
+You can also use the web interface provided in the `app` folder:
+
+1. Install the required dependencies:
+  ```bash
+  pip install -r requirements.txt
+  ```
+2. Start the web application:
+  ```bash
+  python app/app.py
+  ```
+3. Open your browser and go to [http://127.0.0.1:5000](http://127.0.0.1:5000) to use the interface.
+
+The interface allows you to get a random dog image directly from your browser.
 
 ---
 
@@ -28,16 +47,36 @@ python cachorro.py
 Este projeto contém o arquivo `cachorro.py`, que exibe uma imagem aleatória de cachorro ao ser executado. A imagem é obtida da [The Dog API](https://thedogapi.com/).
 
 ### Como funciona
-- Ao rodar o `cachorro.py`, uma requisição é feita para a The Dog API para buscar uma imagem aleatória de cachorro.
-- A imagem é exibida automaticamente na sua tela.
+
+A forma recomendada de usar este projeto é pela interface web:
+
+- A aplicação web Flask oferece uma interface simples no navegador.
+- Ao acessar a rota `/dog` (clicando em um botão ou similar na interface), o backend executa o `cachorro.py` para obter uma nova URL de imagem de cachorro.
+- A URL da imagem é retornada para o frontend, que pode então exibir a imagem diretamente no navegador.
+
+Assim, você pode obter imagens aleatórias de cachorro diretamente pelo navegador de forma prática e intuitiva.
 
 ### Requisitos
 - Python 3
 - Os seguintes pacotes (listados no `requirements.txt`):
   - requests
   - Pillow
+  - Flask 
 
 ### Como usar
-```bash
-python cachorro.py
-```
+
+#### Rodando pela Interface Web
+Você também pode usar a interface web disponível na pasta `app`:
+
+1. Instale as dependências necessárias:
+  ```bash
+  pip install -r requirements.txt
+  ```
+2. Inicie a aplicação web:
+  ```bash
+  python app/app.py
+  ```
+3. Abra o navegador e acesse [http://127.0.0.1:5000](http://127.0.0.1:5000) para usar a interface.
+
+A interface permite obter uma imagem aleatória de cachorro diretamente pelo navegador.
+
