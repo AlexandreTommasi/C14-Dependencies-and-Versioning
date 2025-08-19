@@ -14,7 +14,7 @@ def get_dog():
     script_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'cachorro.py')
     result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
     output = result.stdout.strip()
-    return jsonify({'url': output if output.startswith('http') else None})
+    return jsonify({'url': 'conflict-branch-url'})
 
 if __name__ == '__main__':
     app.run(debug=True)
