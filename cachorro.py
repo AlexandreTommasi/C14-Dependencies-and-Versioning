@@ -1,12 +1,14 @@
-from PIL import Image
 import requests
-from io import BytesIO
 
 def get_dog_image_url():
-    # Retorna tipo totalmente inesperado
-    return 12345
-
-if __name__ == "__main__":
-    img_url = get_dog_image_url()
-    if img_url:
-        print(img_url)
+    try:
+        response = requests.get('https://dog.ceo/api/breeds/image/random', timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        if isinstance(data, list) and data and 'url' in data[0]:
+            return data[0]['url']
+        elif isinstance(data, dict) and 'message' in data and data.get('status') == 'success':
+            return data['message']
+        return None
+    except Exception:
+        return None
