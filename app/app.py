@@ -8,15 +8,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Retorna status errado e conteúdo inesperado
+    return 'Página não encontrada', 404
 
 @app.route('/dog')
 def get_dog():
-    try:
-        img_url = get_dog_image_url()
-        return jsonify({'url': img_url})
-    except Exception as e:
-        return jsonify({'url': None}), 200
+    # Retorna formato inesperado e status errado
+    return 'erro', 500
 
 if __name__ == '__main__':
     app.run(debug=True)
