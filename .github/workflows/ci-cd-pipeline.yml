@@ -35,8 +35,8 @@ jobs:
     
     - name: Run tests with coverage
       run: |
-        pytest tests/ --cov=app --cov=cachorro --cov-report=xml --cov-report=html --cov-report=term-missing
-    
+        pytest tests/ --cov=app --cov=cachorro --cov-report=xml --cov-report=html --cov-report=term-missing --junit-xml=test-results.xml -v
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
       with:
@@ -44,12 +44,23 @@ jobs:
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
-    
-    - name: Archive coverage reports
+
+    - name: Archive test results and coverage reports
       uses: actions/upload-artifact@v3
       with:
-        name: coverage-reports
-        path: htmlcov/
+        name: test-results-and-coverage
+        path: |
+          htmlcov/
+          coverage.xml
+          test-results.xml
+        retention-days: 30
+
+    - name: Archive coverage logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-logs
+        path: .coverage
+        retention-days: 7
 
   build:
     runs-on: ubuntu-latest
@@ -80,9 +91,18 @@ jobs:
     - name: Build package
       run: |
         python setup.py sdist
-    
-    - name: Archive build artifacts
+
+    - name: Archive distribution packages
       uses: actions/upload-artifact@v3
       with:
-        name: distribution-packages
-        path: dist/
+        name: python-distribution-packages
+        path: dist/*.tar.gz
+        retention-days: 90
+
+    - name: Archive build logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-logs
+        path: build/
+        retention-days: 7
+        if-no-files-found: ignore
