@@ -138,8 +138,9 @@ jobs:
     - name: Send notification email
       env:
         NOTIFICATION_EMAIL: ${{ vars.NOTIFICATION_EMAIL || secrets.NOTIFICATION_EMAIL }}
-        SENDER_EMAIL: ${{ vars.SENDER_EMAIL || 'noreply@github-actions.com' }}
-        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+        SENDER_EMAIL: ${{ vars.SENDER_EMAIL || secrets.GMAIL_USER }}
+        GMAIL_USER: ${{ secrets.GMAIL_USER }}
+        GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
       run: |
         echo "${{ steps.pipeline-status.outputs.emoji }} Enviando notificação de ${{ steps.pipeline-status.outputs.status }}"
         echo "📊 Resultado dos testes: ${{ steps.pipeline-status.outputs.test_result }}"

@@ -13,12 +13,12 @@ def send_notification_email():
     """Envia email de notificação sobre a execução do pipeline"""
 
     # Obtém variáveis de ambiente (obrigatório pelo requisito)
-    recipient_email = os.getenv('NOTIFICATION_EMAIL')
-    sender_email = os.getenv('SENDER_EMAIL', 'noreply@github-actions.com')
-    smtp_password = os.getenv('SMTP_PASSWORD', '')
+    recipient_email = os.getenv('NOTIFICATION_EMAIL') or os.getenv('GMAIL_USER')
+    gmail_user = os.getenv('GMAIL_USER')
+    sender_email = os.getenv('SENDER_EMAIL', gmail_user or 'noreply@github-actions.com')
 
     if not recipient_email:
-        print("❌ ERRO: Variável NOTIFICATION_EMAIL não configurada")
+        print("❌ ERRO: Variável NOTIFICATION_EMAIL ou GMAIL_USER deve estar configurada")
         sys.exit(1)
 
     # Obtém informações do GitHub Actions
@@ -99,13 +99,26 @@ def send_notification_email():
         print(f"📁 Repositório: {repository}")
         print(f"🔢 Execução: #{run_number}")
 
-        # Para desenvolvimento/teste - não envia email real
-        # Em produção, você configuraria SMTP real aqui
-        if os.getenv('GITHUB_ACTIONS'):
-            print("✅ Notificação processada com sucesso!")
-            print("📝 Em ambiente de produção, o email seria enviado via SMTP")
+        # Envia email real via Gmail SMTP
+        gmail_password = os.getenv('GMAIL_APP_PASSWORD')
+
+        if gmail_user and gmail_password:
+            print("🔐 Credenciais Gmail encontradas - enviando email real...")
+
+            # Conecta ao servidor Gmail
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()  # Habilita criptografia
+            server.login(gmail_user, gmail_password)
+
+            # Envia o email
+            text = msg.as_string()
+            server.sendmail(sender_email, recipient_email, text)
+            server.quit()
+
+            print("✅ Email enviado com sucesso via Gmail!")
         else:
-            print("🧪 Modo de teste local - email não enviado")
+            print("⚠️ Credenciais Gmail não configuradas - simulando envio...")
+            print("📝 Para envio real, configure GMAIL_USER e GMAIL_APP_PASSWORD")
 
         return True
 
