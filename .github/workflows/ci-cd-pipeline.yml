@@ -61,6 +61,7 @@ jobs:
         name: coverage-logs
         path: .coverage
         retention-days: 7
+        if-no-files-found: ignore
 
   build:
     runs-on: ubuntu-latest
