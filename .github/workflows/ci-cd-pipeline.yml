@@ -107,3 +107,58 @@ jobs:
         path: build/
         retention-days: 7
         if-no-files-found: ignore
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [test, build]  # Executa após test e build terminarem
+    if: always()  # Executa mesmo se test ou build falharem
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Determine pipeline status
+      id: pipeline-status
+      run: |
+        if [[ "${{ needs.test.result }}" == "success" && "${{ needs.build.result }}" == "success" ]]; then
+          echo "status=SUCESSO" >> $GITHUB_OUTPUT
+          echo "emoji=✅" >> $GITHUB_OUTPUT
+        else
+          echo "status=FALHA" >> $GITHUB_OUTPUT
+          echo "emoji=❌" >> $GITHUB_OUTPUT
+        fi
+        echo "test_result=${{ needs.test.result }}" >> $GITHUB_OUTPUT
+        echo "build_result=${{ needs.build.result }}" >> $GITHUB_OUTPUT
+
+    - name: Send notification email
+      env:
+        NOTIFICATION_EMAIL: ${{ vars.NOTIFICATION_EMAIL || secrets.NOTIFICATION_EMAIL }}
+        SENDER_EMAIL: ${{ vars.SENDER_EMAIL || 'noreply@github-actions.com' }}
+        SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      run: |
+        echo "${{ steps.pipeline-status.outputs.emoji }} Enviando notificação de ${{ steps.pipeline-status.outputs.status }}"
+        echo "📊 Resultado dos testes: ${{ steps.pipeline-status.outputs.test_result }}"
+        echo "📦 Resultado do build: ${{ steps.pipeline-status.outputs.build_result }}"
+        echo "📧 Email será enviado para: $NOTIFICATION_EMAIL"
+        python notify_email.py "${{ steps.pipeline-status.outputs.status }}"
+
+    - name: Create notification summary
+      run: |
+        echo "## 📧 Notificação de Pipeline" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Status Geral:** ${{ steps.pipeline-status.outputs.emoji }} ${{ steps.pipeline-status.outputs.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Resultados detalhados:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Testes:** ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Build:** ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**📧 Email enviado para:** \`$NOTIFICATION_EMAIL\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**🕐 Executado em:** $(date '+%d/%m/%Y %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+      env:
+        NOTIFICATION_EMAIL: ${{ vars.NOTIFICATION_EMAIL || secrets.NOTIFICATION_EMAIL }}
